@@ -1,5 +1,6 @@
 # 【BytecodeScreen】
 本工具设计初衷是由前阵子的beichen师傅挖掘的CS的RCE漏洞，因为刚毕业还在适应新的工作，上个月就一直工作很忙，产品果然没我想的这么好做。终于在国庆假期，可以好好的学习一下主管的这篇文章[https://mp.weixin.qq.com/s/l5e2p_WtYSCYYhYE0lzRdQ](https://mp.weixin.qq.com/s/l5e2p_WtYSCYYhYE0lzRdQ)，看到这个部分的时候有了一些思考![image.png](https://cdn.nlark.com/yuque/0/2022/png/25851247/1665928648372-ca485d99-7cec-42ef-85ea-0befa86ee120.png#clientId=u093b1d65-1a51-4&crop=0&crop=0&crop=1&crop=1&from=paste&height=196&id=u9d5dc17b&margin=%5Bobject%20Object%5D&name=image.png&originHeight=245&originWidth=701&originalType=binary&ratio=1&rotation=0&showTitle=false&size=50123&status=done&style=none&taskId=ube076e0d-1b77-4695-8211-091f2132b22&title=&width=560.8)
+
 这里是主管总结的符合此情况的类的要求。找了一遍网上的工具（可能是我找的不够仔细并且IDEA用的不够熟练），我第一时间没有找到可以帮我快速筛选的工具，昨天看了pang0lin师傅的文章，发现好像是存在这样的情况。
 之前跟着threedr3am,Longgofo,4ra1n,su18等很多师傅的文章学习了GadgetInspector代码和原理相关的知识，由此借鉴了很多的代码从而完成了一款基于ASM来获取字节码信息筛选的工具来应对此等情况。
 项目使用展示：
@@ -133,3 +134,5 @@ java -jar BytecodeScreen.jar -j D:\Desktop\123.txt -m "{(<init>)}{(set*)}" -p {(
 ![image.png](https://cdn.nlark.com/yuque/0/2022/png/25851247/1666109233463-5078d781-2d63-4f3b-9a85-b06acb159c58.png#clientId=u999e8163-3235-4&crop=0&crop=0&crop=1&crop=1&from=paste&height=413&id=u0a79e4a8&margin=%5Bobject%20Object%5D&name=image.png&originHeight=516&originWidth=1203&originalType=binary&ratio=1&rotation=0&showTitle=false&size=47988&status=done&style=none&taskId=ue473dd9a-eb06-4f62-be11-e6053636043&title=&width=962.4)
 具体使用一共18种情况：
 ![未命名文件.jpg](https://cdn.nlark.com/yuque/0/2022/jpeg/25851247/1666109266365-ab9abb8e-1ffb-4baf-aecf-fda453e1f42e.jpeg#clientId=u999e8163-3235-4&crop=0&crop=0&crop=1&crop=1&from=ui&id=u38fc4a86&margin=%5Bobject%20Object%5D&name=%E6%9C%AA%E5%91%BD%E5%90%8D%E6%96%87%E4%BB%B6.jpg&originHeight=5289&originWidth=5451&originalType=binary&ratio=1&rotation=0&showTitle=false&size=875365&status=done&style=none&taskId=uc7926ba6-80ce-47b3-a2ea-2ec83ccce45&title=)
+# 总结
+希望这个工具可以帮助到师傅们在工作学习中减少在不必要的方面浪费时间。也希望师傅们可以多挖漏洞，快速变强。如果有什么问题或者改进的想法，请多多提需求。
