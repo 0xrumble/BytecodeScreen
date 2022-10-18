@@ -134,6 +134,5 @@ java -jar BytecodeScreen.jar -j D:\Desktop\123.txt -m "{(<init>)}{(set*)}" -p {(
 ![image.png](https://cdn.nlark.com/yuque/0/2022/png/25851247/1666109233463-5078d781-2d63-4f3b-9a85-b06acb159c58.png#clientId=u999e8163-3235-4&crop=0&crop=0&crop=1&crop=1&from=paste&height=413&id=u0a79e4a8&margin=%5Bobject%20Object%5D&name=image.png&originHeight=516&originWidth=1203&originalType=binary&ratio=1&rotation=0&showTitle=false&size=47988&status=done&style=none&taskId=ue473dd9a-eb06-4f62-be11-e6053636043&title=&width=962.4)
 具体使用一共18种情况：
 ![未命名文件.jpg](https://cdn.nlark.com/yuque/0/2022/jpeg/25851247/1666109266365-ab9abb8e-1ffb-4baf-aecf-fda453e1f42e.jpeg#clientId=u999e8163-3235-4&crop=0&crop=0&crop=1&crop=1&from=ui&id=u38fc4a86&margin=%5Bobject%20Object%5D&name=%E6%9C%AA%E5%91%BD%E5%90%8D%E6%96%87%E4%BB%B6.jpg&originHeight=5289&originWidth=5451&originalType=binary&ratio=1&rotation=0&showTitle=false&size=875365&status=done&style=none&taskId=uc7926ba6-80ce-47b3-a2ea-2ec83ccce45&title=)
-
 # 总结
 希望这个工具可以帮助到师傅们在工作学习中减少在不必要的方面浪费时间。也希望师傅们可以多挖漏洞，快速变强。如果有什么问题或者改进的想法，请多多提需求。
