@@ -28,12 +28,12 @@ public class MainScreen {
     private static final Map<String, ClassFile> classFileByName = new HashMap<>();
     private static final Map<MethodReference.Handle, Set<MethodReference.Handle>> methodImpls = new HashMap<>();
 
-    private static HashSet<String> hassuperclass = new HashSet<>();
+    private static final HashSet<String> hassuperclass = new HashSet<>();
 
-    private static HashSet<String> resultclass = new HashSet<>();
-    private static List<String> hasinterfaces = new ArrayList<>();
+    private static final HashSet<String> resultclass = new HashSet<>();
+    private static final List<String> hasinterfaces = new ArrayList<>();
 
-    private static List<String> has_parameter = new ArrayList<>();
+    private static final List<String> has_parameter = new ArrayList<>();
 
     public static void screen(String[] args) throws Exception {
         Logo.PrintLogo();//打印logo
@@ -44,9 +44,9 @@ public class MainScreen {
         if (command.help) {
             jc.usage();
         }else{
-            if (command.jarpath != null && command.jarpath != "") {
+            if (command.jarpath != null && !command.jarpath.equals("")) {
                     List<String> commondlist = new ArrayList<>();
-                    Boolean readbasicjar = false;
+                    boolean readbasicjar = false;
                     HashSet<String> surperclassname = new HashSet<>();
 
                     if(command.isjar){
@@ -74,14 +74,11 @@ public class MainScreen {
                     }
 
                     if (command.superclass != null) {
-                        List<String> supers = new ArrayList<>();
                         commondlist.add("superclass");
                         String superclassname1 = command.superclass.replace(".", "/");
                         surperclassname.add(superclassname1);
                         has_superclass(surperclassname);
-                        for(String superclass:hassuperclass){
-                            supers.add(superclass);
-                        }
+                        List<String> supers = new ArrayList<>(hassuperclass);
                         returnresults(supers);
                         control_dubbomethod(supers);
 
@@ -98,7 +95,7 @@ public class MainScreen {
                     String returnparameter = "";
                     String parameter = "";
                     String method = "";
-                    Boolean sta_tic = false;
+                    boolean sta_tic = false;
                     if(command.isstatic){
                         sta_tic = true;
                     }
@@ -112,10 +109,10 @@ public class MainScreen {
                     method = command.method;
                     has_parameter_returns(method, parameter, returnparameter,sta_tic);
                     List<String> has_parlist = new ArrayList<>();
-                    for(int x = 0;x<has_parameter.size();x++){
-                        String[] ress = has_parameter.get(x).split("#   ");
-                        has_parlist.add(ress[1]);
-                    }
+                        for (String s : has_parameter) {
+                            String[] ress = s.split("#   ");
+                            has_parlist.add(ress[1]);
+                        }
                     returnresults(has_parlist);
                         if(command.isdedug){
                             System.out.println("方法实现结果收集完毕,满足条件的类为：");
@@ -137,21 +134,18 @@ public class MainScreen {
                 if (has_parameter.isEmpty()) {
                     resultclass.clear();
                 }
-                List<String> resultlist = new ArrayList<>();
-                    for(String ss :resultclass){
-                        resultlist.add(ss);
-                    }
+                List<String> resultlist = new ArrayList<>(resultclass);
                 HashSet<String> shs = new HashSet<>();
-                for(int i =0 ;i<resultlist.size();i++){
-                    shs.add(resultlist.get(i).replace(resultlist.get(i).substring(resultlist.get(i).indexOf("$")),""));
+                for (String s : resultlist) {
+                    shs.add(s.replace(s.substring(s.indexOf("$")), ""));
                 }
                 System.out.println("result:");
                 int ii =1;
                 for(String xxs:shs){
                     System.out.println(ii+"."+xxs);
-                    for(int i =0 ;i<resultlist.size();i++){
-                        if(resultlist.get(i).startsWith(xxs)){
-                            System.out.println("     "+resultlist.get(i).substring(resultlist.get(i).indexOf("$")+1));
+                    for (String s : resultlist) {
+                        if (s.startsWith(xxs)) {
+                            System.out.println("     " + s.substring(s.indexOf("$") + 1));
                         }
 
                     }
@@ -165,32 +159,29 @@ public class MainScreen {
 
     }
     public static void control_dubbomethod(List<String> classnames){
-        Map<MethodReference.Handle, MethodReference> methodMapdubbos = new HashMap<>();
 
         if(methodMapdubbo.isEmpty()){
-            for(int i =0;i<classnames.size();i++){
-                for(Map.Entry<MethodReference.Handle, MethodReference> handle:methodMap.entrySet()){
-                    if(handle.getKey().getClassReference().getName().equals(classnames.get(i))){
-                        methodMapdubbo.put(handle.getKey(),handle.getValue());
+            for (String classname : classnames) {
+                for (Map.Entry<MethodReference.Handle, MethodReference> handle : methodMap.entrySet()) {
+                    if (handle.getKey().getClassReference().getName().equals(classname)) {
+                        methodMapdubbo.put(handle.getKey(), handle.getValue());
                     }
                 }
             }
         }else {
-            for(Map.Entry<MethodReference.Handle, MethodReference> handle:methodMapdubbo.entrySet()){
-                methodMapdubbos.put(handle.getKey(),handle.getValue());
-            }
+            Map<MethodReference.Handle, MethodReference> methodMapdubbos = new HashMap<>(methodMapdubbo);
             methodMapdubbo.clear();
-            for(int i =0;i<classnames.size();i++){
-                for(Map.Entry<MethodReference.Handle, MethodReference> handle:methodMapdubbos.entrySet()){
-                    if(handle.getKey().getClassReference().getName().equals(classnames.get(i))){
-                        methodMapdubbo.put(handle.getKey(),handle.getValue());
+            for (String classname : classnames) {
+                for (Map.Entry<MethodReference.Handle, MethodReference> handle : methodMapdubbos.entrySet()) {
+                    if (handle.getKey().getClassReference().getName().equals(classname)) {
+                        methodMapdubbo.put(handle.getKey(), handle.getValue());
                     }
                 }
             }
         }
     }
 
-    public static HashSet<String> has_parameter_returns(String name ,String parameter,String returnparameter,Boolean isstaic){
+    public static void has_parameter_returns(String name , String parameter, String returnparameter, Boolean isstaic){
         HashSet<String> hashSet = new HashSet<>();
         
         List<String> name1 = regex_out(name);
@@ -244,9 +235,7 @@ public class MainScreen {
             //多次--->判断最终结果是否为空
             if(has_parameter.size() == 0){//最终结果为空
                 hashSet = targetclass(resultlist,methodname,methodparam,methodreturn);
-                for(String target:hashSet){
-                    has_parameter.add(target);
-                }
+                has_parameter.addAll(hashSet);
             }else {//最终结果不为空
                 HashSet<String> hashSet1 = targetclass(resultlist,methodname,methodparam,methodreturn);
                 for(String ii:has_parameter){
@@ -266,13 +255,10 @@ public class MainScreen {
                 }
             }
             has_parameter.clear();
-            for(String s:hashSet){
-                has_parameter.add(s);
-            }
+            has_parameter.addAll(hashSet);
             hashSet.clear();
 
         }
-        return hashSet;
     }
     public static HashSet<String> targetclass(List<String> resultlist,String methodname,String methodparam,String methodreturn){
         HashSet<String> result = new HashSet<>();
@@ -283,13 +269,11 @@ public class MainScreen {
         methodname = methodname.replace("*","");
 
         if(methodMapdubbo.isEmpty()){
-            for(Map.Entry<MethodReference.Handle, MethodReference> handle:methodMap.entrySet()){
-                methodMapdubbo.put(handle.getKey(),handle.getValue());
-            }
+            methodMapdubbo.putAll(methodMap);
         }
 
         //name
-        if(resultlist.get(0) == "方法名模糊"){
+        if(Objects.equals(resultlist.get(0), "方法名模糊")){
             List<String> list = new ArrayList<>();
             HashSet<String> hashSet = new HashSet<>();
             for(Map.Entry<MethodReference.Handle, MethodReference> handle:methodMapdubbo.entrySet()){
@@ -316,7 +300,7 @@ public class MainScreen {
 
 
         //par
-        if(resultlist.get(1) == "参数模糊"){
+        if(Objects.equals(resultlist.get(1), "参数模糊")){
             List<String> list = new ArrayList<>();
             HashSet<String> hashSet = new HashSet<>();
             for(Map.Entry<MethodReference.Handle, MethodReference> handle:methodMapdubbo.entrySet()){
@@ -327,7 +311,7 @@ public class MainScreen {
             }
             parresult =getresult(hashSet,list);
             make_methoddunnolist(parresult);
-        }else if(resultlist.get(1) == "参数确定"){
+        }else if(Objects.equals(resultlist.get(1), "参数确定")){
             List<String> list = new ArrayList<>();
             HashSet<String> hashSet = new HashSet<>();
             for(Map.Entry<MethodReference.Handle, MethodReference> handle:methodMapdubbo.entrySet()){
@@ -338,7 +322,7 @@ public class MainScreen {
             }
             parresult = getresult(hashSet,list);
             make_methoddunnolist(parresult);
-        }else if(resultlist.get(1) == "没有参数"){
+        }else if(Objects.equals(resultlist.get(1), "没有参数")){
             List<String> list = new ArrayList<>();
             HashSet<String> hashSet = new HashSet<>();
             for(Map.Entry<MethodReference.Handle, MethodReference> handle:methodMapdubbo.entrySet()){
@@ -352,7 +336,7 @@ public class MainScreen {
         }
 
         //return
-        if(resultlist.get(2) == "返回值模糊"){
+        if(Objects.equals(resultlist.get(2), "返回值模糊")){
             List<String> list = new ArrayList<>();
             HashSet<String> hashSet = new HashSet<>();
             for(Map.Entry<MethodReference.Handle, MethodReference> handle:methodMapdubbo.entrySet()){
@@ -363,7 +347,7 @@ public class MainScreen {
             }
             returnresult = getresult(hashSet,list);
             make_methoddunnolist(returnresult);
-        } else if(resultlist.get(2) == "返回值确定") {
+        } else if(Objects.equals(resultlist.get(2), "返回值确定")) {
             List<String> list = new ArrayList<>();
             HashSet<String> hashSet = new HashSet<>();
             for(Map.Entry<MethodReference.Handle, MethodReference> handle:methodMapdubbo.entrySet()){
@@ -374,7 +358,7 @@ public class MainScreen {
             }
             returnresult = getresult(hashSet,list);
             make_methoddunnolist(returnresult);
-        }else if(resultlist.get(2) == "没有返回值") {
+        }else if(Objects.equals(resultlist.get(2), "没有返回值")) {
             List<String> list = new ArrayList<>();
             HashSet<String> hashSet = new HashSet<>();
             for(Map.Entry<MethodReference.Handle, MethodReference> handle:methodMapdubbo.entrySet()){
@@ -388,7 +372,7 @@ public class MainScreen {
         }
 
         //static
-        if(resultlist.get(3)=="nostatic"){
+        if(Objects.equals(resultlist.get(3), "nostatic")){
             List<String> list = new ArrayList<>();
             HashSet<String> hashSet = new HashSet<>();
             for(Map.Entry<MethodReference.Handle, MethodReference> handle:methodMapdubbo.entrySet()){
@@ -400,7 +384,7 @@ public class MainScreen {
             staticresult = getresult(hashSet,list);
             make_methoddunnolist(staticresult);
         }
-        if(resultlist.get(3)=="nostatic"){
+        if(Objects.equals(resultlist.get(3), "nostatic")){
             result = tarclass(nameresult,parresult,returnresult,staticresult);
         }else {
             result = tarclass(nameresult,parresult,returnresult);
@@ -408,11 +392,8 @@ public class MainScreen {
         return result;
     }
     public static void make_methoddunnolist(HashMap<String,List<String>> hashMap){
-        Map<MethodReference.Handle, MethodReference> methodMapdubbos = new HashMap<>();
 
-        for(Map.Entry<MethodReference.Handle, MethodReference> handle:methodMapdubbo.entrySet()){
-            methodMapdubbos.put(handle.getKey(),handle.getValue());
-        }
+        Map<MethodReference.Handle, MethodReference> methodMapdubbos = new HashMap<>(methodMapdubbo);
 
         methodMapdubbo.clear();
 
@@ -520,11 +501,11 @@ public class MainScreen {
     }
     public static String control_parameter(String parameter){
         String[] list = parameter.split(",");
-        String par = "";
-        for(int i = 0;i<list.length;i++){
-            par = par+Basic_variable_type(list[i]);
+        StringBuilder par = new StringBuilder();
+        for (String s : list) {
+            par.append(Basic_variable_type(s));
         }
-        return par;
+        return par.toString();
     }
     public static String Basic_variable_type(String str){
         switch (str){
@@ -554,10 +535,11 @@ public class MainScreen {
                 }
                 if(str.contains("[]")){
                     int count = appearNumber(str,"[]");
-                    str = "L"+str+";";
-                    for(int i =0;i<count;i++){
-                        str = "["+str;
+                    StringBuilder strBuilder = new StringBuilder("L" + str + ";");
+                    for(int i = 0; i<count; i++){
+                        strBuilder.insert(0, "[");
                     }
+                    str = strBuilder.toString();
                     return str.replace("[]","");
                 }else {
                     str = "L"+str+";";
@@ -587,28 +569,28 @@ public class MainScreen {
             return has_superclass(hashSet);
         }
     }
-    public static List<String> has_interfaces(List<String> interfacea){
+    public static void has_interfaces(List<String> interfacea){
         List<String> hashSet = new ArrayList<>();
-        for (int i = 0;i<interfacea.size();i++){
-            if(hasinterfaces.size()==0){
-                for(Map.Entry<ClassReference.Handle, ClassReference> handle:classMap.entrySet()){
+        for (String s : interfacea) {
+            if (hasinterfaces.size() == 0) {
+                for (Map.Entry<ClassReference.Handle, ClassReference> handle : classMap.entrySet()) {
                     List<String> interfaces = handle.getValue().getInterfaces();
-                    if(interfaces !=null){
-                        for (int j=0;j<interfaces.size();j++){
-                            if(interfaces.get(j).contains(interfacea.get(i).replace(".", "/").replace("|", "$"))){
+                    if (interfaces != null) {
+                        for (int j = 0; j < interfaces.size(); j++) {
+                            if (interfaces.get(j).contains(s.replace(".", "/").replace("|", "$"))) {
                                 hasinterfaces.add(handle.getKey().getName());
                             }
                         }
                     }
                 }
-            }else{
-                for(Map.Entry<ClassReference.Handle, ClassReference> handle:classMap.entrySet()){
+            } else {
+                for (Map.Entry<ClassReference.Handle, ClassReference> handle : classMap.entrySet()) {
                     List<String> interfaces = handle.getValue().getInterfaces();
-                    if(interfaces !=null){
-                        for (int j=0;j<interfaces.size();j++){
-                            if(interfaces.get(j).contains(interfacea.get(i).replace(".", "/").replace("|", "$"))){
-                                for(String ii:hasinterfaces){
-                                    if(handle.getKey().getName().equals(ii)){
+                    if (interfaces != null) {
+                        for (String anInterface : interfaces) {
+                            if (anInterface.contains(s.replace(".", "/").replace("|", "$"))) {
+                                for (String ii : hasinterfaces) {
+                                    if (handle.getKey().getName().equals(ii)) {
                                         hashSet.add(handle.getKey().getName());
                                     }
                                 }
@@ -617,13 +599,10 @@ public class MainScreen {
                     }
                 }
                 hasinterfaces.clear();
-                for(String target :hashSet){
-                    hasinterfaces.add(target);
-                }
+                hasinterfaces.addAll(hashSet);
                 hashSet.clear();
             }
         }
-        return hashSet;
     }
     private static void inherit() {
         InheritanceMap inheritanceMap = InheritanceService.start(classMap);//key是每一个类classReference.getHandle,value是一个key为每一个class.handle,value其父类或者接口类handle的set集合
@@ -643,12 +622,13 @@ public class MainScreen {
         if(file.isFile()){
             if(path.endsWith(".txt")){
                 List<String> list = readUtil.readToString(path);
-                for(int i = 0;i<list.size();i++){
-                    if(list.get(i).endsWith(".jar")){
-                        classFileList.addAll(ClassUtil.getAllClassesFromJars(Collections.singletonList(list.get(i)), readbasicjar));
-                    }else if(new File(list.get(i)).isDirectory()){
-                        getclassfromfloder(list.get(i),readjar,readbasicjar);
-                    }else {
+                for (String s : list) {
+                    if (s.endsWith(".jar")) {
+                        classFileList.addAll(ClassUtil.getAllClassesFromJars(Collections.singletonList(s),
+                                readbasicjar));
+                    } else if (new File(s).isDirectory()) {
+                        getclassfromfloder(s, readjar, readbasicjar);
+                    } else {
                         System.out.println("导入出错！！！！！！！！！！！！！");
                     }
                 }
@@ -658,33 +638,27 @@ public class MainScreen {
         }
     }
     public static void getclassfromfloder(String path,boolean readjar,boolean readbasicjar) throws Exception {
-        ReadUtil readUtil = new ReadUtil();
         File file = new File(path);
         classFileList.addAll(ClassUtil.getAllClassesFormfolder(Collections.singletonList(path), readbasicjar));
 
         if(readjar){
-            List<String> jarfiles = readUtil.noRecursion(file,".jar");
-            for(int i = 0;i<jarfiles.size();i++){
-                classFileList.addAll(ClassUtil.getAllClassesFromJars(Collections.singletonList(jarfiles.get(i)), readbasicjar));
+            List<String> jarfiles = ReadUtil.noRecursion(file,".jar");
+            for (String jarfile : jarfiles) {
+                classFileList.addAll(ClassUtil.getAllClassesFromJars(Collections.singletonList(jarfile), readbasicjar));
             }
         }
     }
     public static void returnresults(List<String> target){
 
         if(resultclass.size() == 0){
-            for(String t:target){
-                resultclass.add(t);
-            }
+            resultclass.addAll(target);
         }else{
-            List<String> middo = new ArrayList<>();
-            for(String t:resultclass){
-                middo.add(t);
-            }
+            List<String> middo = new ArrayList<>(resultclass);
             resultclass.clear();
             for(String s:middo){
-                for(int i = 0;i<target.size();i++){
-                    if(target.get(i).startsWith(s)){
-                        resultclass.add(target.get(i));
+                for (String value : target) {
+                    if (value.startsWith(s)) {
+                        resultclass.add(value);
                     }
                 }
             }
