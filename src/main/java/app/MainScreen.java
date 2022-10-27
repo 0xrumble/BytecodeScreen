@@ -35,10 +35,12 @@ public class MainScreen {
 
     private static final List<String> has_parameter = new ArrayList<>();
 
+    //获取commond
+    private static final Commands command = new Commands();
+
     public static void screen(String[] args) throws Exception {
         Logo.PrintLogo();//打印logo
         System.out.println("============================================================================================");
-        Commands command = new Commands();  //获取commond
         JCommander jc = JCommander.newBuilder().addObject(command).build();
         jc.parse(args);
         if (command.help) {
@@ -52,7 +54,7 @@ public class MainScreen {
                     if(command.isjar){
                         readbasicjar = true;
                     }
-                    getClassFileList(command.jarpath, true, readbasicjar);
+                    getClassFileList(command.jarpath, readbasicjar);
                     discovery();
                     inherit();
 
@@ -95,10 +97,7 @@ public class MainScreen {
                     String returnparameter = "";
                     String parameter = "";
                     String method = "";
-                    boolean sta_tic = false;
-                    if(command.isstatic){
-                        sta_tic = true;
-                    }
+                    boolean sta_tic = command.isstatic;
                     if (command.paramter != null) {
                         parameter = command.paramter.replace(".", "/").replace("|", "$");
                     }
@@ -408,11 +407,21 @@ public class MainScreen {
     }
     public static HashMap<String,List<String>> getresult(HashSet<String> hashSet,List<String> list){
         HashMap<String,List<String>> returnresult = new HashMap<>();
-        for(String s:hashSet){
-            List<String> list1 = getlist(s,list);
-            returnresult.put(s,list1);
+        if (command.isdedug){
+            for(String s:hashSet){
+                List<String> list1 = getlist(s,list);
+                returnresult.put(s,list1);
+                System.out.println(returnresult);
+            }
+        }
+        else {
+            for(String s:hashSet){
+                List<String> list1 = getlist(s,list);
+                returnresult.put(s,list1);
+            }
         }
         return returnresult;
+
     }
     public static List<String> getlist(String s,List<String> list){
         List<String> list1 = new ArrayList<>();
@@ -576,8 +585,8 @@ public class MainScreen {
                 for (Map.Entry<ClassReference.Handle, ClassReference> handle : classMap.entrySet()) {
                     List<String> interfaces = handle.getValue().getInterfaces();
                     if (interfaces != null) {
-                        for (int j = 0; j < interfaces.size(); j++) {
-                            if (interfaces.get(j).contains(s.replace(".", "/").replace("|", "$"))) {
+                        for (String anInterface : interfaces) {
+                            if (anInterface.contains(s.replace(".", "/").replace("|", "$"))) {
                                 hasinterfaces.add(handle.getKey().getName());
                             }
                         }
@@ -613,11 +622,11 @@ public class MainScreen {
         DiscoveryService.start(classFileList, discoveredClasses, discoveredMethods,
                 classMap, methodMap, classFileByName);
     }
-    private static void getClassFileList(String path,boolean readjar,boolean readbasicjar) throws Exception {
+    private static void getClassFileList(String path, boolean readbasicjar) throws Exception {
         ReadUtil readUtil = new ReadUtil();
         File file = new File(path);
         if(file.isDirectory()){
-            getclassfromfloder(path,readjar,readbasicjar);
+            getclassfromfloder(path, true,readbasicjar);
         }
         if(file.isFile()){
             if(path.endsWith(".txt")){
@@ -627,7 +636,7 @@ public class MainScreen {
                         classFileList.addAll(ClassUtil.getAllClassesFromJars(Collections.singletonList(s),
                                 readbasicjar));
                     } else if (new File(s).isDirectory()) {
-                        getclassfromfloder(s, readjar, readbasicjar);
+                        getclassfromfloder(s, true, readbasicjar);
                     } else {
                         System.out.println("导入出错！！！！！！！！！！！！！");
                     }
@@ -643,6 +652,7 @@ public class MainScreen {
 
         if(readjar){
             List<String> jarfiles = ReadUtil.noRecursion(file,".jar");
+            assert jarfiles != null;
             for (String jarfile : jarfiles) {
                 classFileList.addAll(ClassUtil.getAllClassesFromJars(Collections.singletonList(jarfile), readbasicjar));
             }
