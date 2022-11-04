@@ -49,7 +49,7 @@ Usage: <main class> [options]
 ```python
 -h --help: 输出help页面属性。
 --debug:   开启debug属性。
--j --targetpath : 
+-j --targetpath : 指定项目的主要扫描目标，最终结果由指定的路径决定（所有参数中出现的继承类和接口也需要被此处指明，如果扫描类为rt.jar包内，也可以加上--jar参数表示扫描rt.jar包内的类）
    1.后面跟一个文件夹路径，会读取这个文件夹及子文件夹。例如：
 							-j D:\Desktop\testts\target\classes
    2.后面跟一个jar文件路径，会读取这个文件夹及子文件夹。例如：
